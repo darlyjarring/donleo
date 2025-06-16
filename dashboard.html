@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <script type="module" src="scripts/factura.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Panel Don Leo</title>
+</head>
+<body class="p-6">
+  <img src="URL_DEL_LOGO" class="w-32 mb-4" alt="Logo">
+  <h1 class="text-2xl font-bold mb-6">Registrar Reparación</h1>
+
+  <form id="formFactura" class="space-y-4">
+    <input name="nombre" placeholder="Nombre cliente" class="border p-2 w-full">
+    <input name="cedula" placeholder="Cédula" class="border p-2 w-full">
+    <input name="correo" type="email" placeholder="Correo" class="border p-2 w-full">
+    <input name="equipo" placeholder="Equipo" class="border p-2 w-full">
+    <input name="diagnostico" placeholder="Diagnóstico" class="border p-2 w-full">
+    <input name="solucion" placeholder="Solución" class="border p-2 w-full">
+    <input name="pieza" placeholder="Pieza cambiada (opcional)" class="border p-2 w-full">
+    <input name="costoPieza" type="number" placeholder="Costo pieza" class="border p-2 w-full">
+    <input name="manoObra" type="number" placeholder="Costo mano de obra" class="border p-2 w-full">
+    <input name="fechaIngreso" type="date" class="border p-2 w-full">
+    <input name="fechaEntrega" type="date" class="border p-2 w-full">
+    <button type="submit" class="bg-green-600 text-white p-2 w-full">Guardar y Generar Factura</button>
+  </form>
+
+  <p id="mensaje" class="mt-4 text-green-700"></p>
+</body>
+</html>
