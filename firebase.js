@@ -4,7 +4,7 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.1/firebase
 import { getAuth } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
 
 const firebaseConfig = {
-apiKey: "AIzaSyArPPyaX0NoU2Gkax8bpj5MkWTLMsyZmYQ",
+  apiKey: "AIzaSyArPPyaX0NoU2Gkax8bpj5MkWTLMsyZmYQ",
   authDomain: "estado-de-equipos-rtgs.firebaseapp.com",
   databaseURL: "https://estado-de-equipos-rtgs-default-rtdb.firebaseio.com",
   projectId: "estado-de-equipos-rtgs",
