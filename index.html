@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <script type="module" src="donleo/scripts/auth.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <title>Login - Don Leo</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="scripts/auth.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Login - Don Leo</title>
 </head>
 <body class="bg-gray-100 flex items-center justify-center h-screen">
-  <div class="bg-white p-6 rounded shadow w-96">
-    <h1 class="text-2xl font-bold mb-4 text-center">Soporte Técnico Don Leo</h1>
-    <input id="email" type="email" placeholder="Correo" class="input w-full mb-2 border p-2">
-    <input id="password" type="password" placeholder="Contraseña" class="input w-full mb-2 border p-2">
-    <button id="loginBtn" class="w-full bg-blue-500 text-white p-2">Ingresar</button>
-    <p id="error" class="text-red-500 mt-2 text-sm text-center"></p>
-  </div>
+    <div class="bg-white p-6 rounded shadow w-96">
+        <h1 class="text-2xl font-bold mb-4 text-center">Soporte Técnico Don Leo</h1>
+        <form id="loginForm"> <input id="email" type="email" placeholder="Correo" class="input w-full mb-2 border p-2" required>
+            <input id="password" type="password" placeholder="Contraseña" class="input w-full mb-2 border p-2" required>
+            <button id="loginBtn" type="submit" class="w-full bg-blue-500 text-white p-2">Ingresar</button>
+        </form>
+        <p id="error" class="text-red-500 mt-2 text-sm text-center"></p>
+    </div>
 </body>
 </html>
