@@ -21,4 +21,3 @@ const auth = getAuth(app);
 export { db, auth };
 ```
 
----
