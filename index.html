@@ -1,20 +1,354 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script type="module" src="scripts/auth.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <title>Login - Don Leo</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creador de Hoja de Vida Completa</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    .a4-page {
+      width: 210mm;
+      min-height: 297mm;
+      background: white;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+    }
+  </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center h-screen">
-    <div class="bg-white p-6 rounded shadow w-96">
-        <h1 class="text-2xl font-bold mb-4 text-center">Soporte Técnico Don Leo</h1>
-        <form id="loginForm"> <input id="email" type="email" placeholder="Correo" class="input w-full mb-2 border p-2" required>
-            <input id="password" type="password" placeholder="Contraseña" class="input w-full mb-2 border p-2" required>
-            <button id="loginBtn" type="submit" class="w-full bg-blue-500 text-white p-2">Ingresar</button>
-        </form>
-        <p id="error" class="text-red-500 mt-2 text-sm text-center"></p>
+<body class="bg-gray-100 h-screen flex flex-col">
+
+  <!-- Encabezado -->
+  <header class="bg-blue-900 text-white p-4 flex justify-between items-center shadow-md">
+    <h1 class="text-xl font-bold">Generador de Hoja de Vida Completo</h1>
+    <div class="space-x-2">
+      <button onclick="guardarEnBaseDeDatos()" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-sm font-semibold">
+        💾 Guardar en DB
+      </button>
+      <button onclick="descargarPDF()" class="bg-amber-500 hover:bg-amber-600 px-4 py-2 rounded text-sm font-semibold">
+        📄 Descargar PDF
+      </button>
     </div>
+  </header>
+
+  <!-- Contenedor Principal Divisorio -->
+  <div class="flex flex-1 overflow-hidden">
+    
+    <!-- LADO IZQUIERDO: Formulario de Entrada Dinámico -->
+    <div class="w-1/2 p-6 overflow-y-auto bg-white border-r space-y-6">
+      
+      <!-- 1. Datos Personales -->
+      <div>
+        <h2 class="text-lg font-bold mb-3 text-blue-900 border-b pb-1">1. Datos Personales</h2>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="col-span-2">
+            <label class="block text-xs font-semibold text-gray-600">Nombre Completo</label>
+            <input type="text" id="in-nombre" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm" placeholder="JOSÉ LEONARDO JARRÍN GAIBOR">
+          </div>
+          <div class="col-span-2">
+            <label class="block text-xs font-semibold text-gray-600">Título / Especialidad</label>
+            <input type="text" id="in-titulo" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm" placeholder="Ingeniero en Computación e Informática | Especialista en...">
+          </div>
+          <div class="col-span-2">
+            <label class="block text-xs font-semibold text-gray-600">Dirección</label>
+            <input type="text" id="in-direccion" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm" placeholder="Guayaquil Isla Trinitaria Coop. Monseñor Leónidas Proaño...">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-600">Teléfono</label>
+            <input type="text" id="in-telefono" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm" placeholder="0961187862">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-600">C.I.</label>
+            <input type="text" id="in-cedula" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm" placeholder="0924865660">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-600">Licencia de Conducir</label>
+            <input type="text" id="in-licencia" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm" placeholder="Tipo B">
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Perfil Profesional -->
+      <div>
+        <h2 class="text-lg font-bold mb-3 text-blue-900 border-b pb-1">2. Perfil Profesional</h2>
+        <textarea id="in-perfil" oninput="actualizarVista()" rows="4" class="w-full border p-2 rounded text-sm" placeholder="Ingeniero en Computación e Informática con sólida experiencia..."></textarea>
+      </div>
+
+      <!-- 3. Competencias -->
+      <div>
+        <h2 class="text-lg font-bold mb-3 text-blue-900 border-b pb-1">3. Competencias (Separadas por comas)</h2>
+        <textarea id="in-competencias" oninput="actualizarVista()" rows="2" class="w-full border p-2 rounded text-sm" placeholder="Planificación Logística, Gestión de Inventarios, Sistema AISV, Yard Planning, Excel Avanzado / Macros VBA"></textarea>
+      </div>
+
+      <!-- 4. Experiencia Laboral Dinámica -->
+      <div>
+        <div class="flex justify-between items-center border-b pb-1 mb-3">
+          <h2 class="text-lg font-bold text-blue-900">4. Experiencia Laboral</h2>
+          <button type="button" onclick="agregarExperiencia()" class="bg-blue-600 text-white text-xs px-3 py-1 rounded hover:bg-blue-700">+ Agregar Empresa</button>
+        </div>
+        <div id="lista-experiencias" class="space-y-4">
+          <!-- Se agregan dinámicamente aquí -->
+        </div>
+      </div>
+
+      <!-- 5. Formación Académica Dinámica -->
+      <div>
+        <div class="flex justify-between items-center border-b pb-1 mb-3">
+          <h2 class="text-lg font-bold text-blue-900">5. Formación Académica</h2>
+          <button type="button" onclick="agregarEstudio()" class="bg-blue-600 text-white text-xs px-3 py-1 rounded hover:bg-blue-700">+ Agregar Estudio</button>
+        </div>
+        <div id="lista-estudios" class="space-y-4">
+          <!-- Se agregan dinámicamente aquí -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- LADO DERECHO: Vista Previa en Tiempo Real (Estilo Hoja A4) -->
+    <div class="w-1/2 bg-gray-200 p-6 overflow-y-auto flex justify-center">
+      <div id="hoja-de-vida" class="a4-page p-8 font-sans text-gray-800 text-xs">
+        
+        <!-- Encabezado con Datos Personales -->
+        <div class="border-b-2 border-blue-900 pb-3 mb-4">
+          <h1 id="pv-nombre" class="text-lg font-bold text-gray-900 uppercase">JOSÉ LEONARDO JARRÍN GAIBOR</h1>
+          <p id="pv-titulo" class="text-xs font-semibold text-blue-800 mt-1">Ingeniero en Computación e Informática | Especialista en Operaciones Portuarias y Logística</p>
+          <p id="pv-direccion" class="text-xs text-gray-600 mt-1">Guayaquil Isla Trinitaria Coop. Monseñor Leónidas Proaño Mz. 5 Solar4.</p>
+          <div class="text-xs text-gray-600 mt-1 space-x-2">
+            <span>Teléfono: <strong id="pv-telefono">0961187862</strong></span> | 
+            <span>C.I. <strong id="pv-cedula">0924865660</strong></span> | 
+            <span>Licencia: <strong id="pv-licencia">Tipo B</strong></span>
+          </div>
+        </div>
+
+        <!-- Perfil Profesional -->
+        <section class="mb-4">
+          <h2 class="text-xs font-bold text-blue-900 uppercase border-b border-gray-300 pb-1 mb-2">Perfil Profesional</h2>
+          <p id="pv-perfil" class="text-justify text-gray-700 leading-relaxed">Resumen del perfil profesional...</p>
+        </section>
+
+        <!-- Competencias Destacadas -->
+        <section class="mb-4">
+          <h2 class="text-xs font-bold text-blue-900 uppercase border-b border-gray-300 pb-1 mb-2">Competencias Destacadas</h2>
+          <ul id="pv-competencias" class="grid grid-cols-2 gap-1 list-disc pl-4 text-gray-700">
+            <!-- Dinámico -->
+          </ul>
+        </section>
+
+        <!-- Experiencia Laboral -->
+        <section class="mb-4">
+          <h2 class="text-xs font-bold text-blue-900 uppercase border-b border-gray-300 pb-1 mb-2">Experiencia Laboral</h2>
+          <div id="pv-experiencia" class="space-y-3">
+            <!-- Dinámico -->
+          </div>
+        </section>
+
+        <!-- Formación Académica -->
+        <section class="mb-4">
+          <h2 class="text-xs font-bold text-blue-900 uppercase border-b border-gray-300 pb-1 mb-2">Formación Académica</h2>
+          <div id="pv-estudios" class="space-y-2">
+            <!-- Dinámico -->
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let contadorExp = 0;
+    let contadorEst = 0;
+
+    // Agregar bloque de experiencia en el formulario
+    function agregarExperiencia() {
+      contadorExp++;
+      const id = contadorExp;
+      const div = document.createElement('div');
+      div.id = `exp-item-${id}`;
+      div.className = 'p-3 bg-gray-50 border rounded-md space-y-2 relative';
+      div.innerHTML = `
+        <button onclick="eliminarItem('exp-item-${id}')" class="absolute top-2 right-2 text-red-600 font-bold text-xs">✕ Eliminar</button>
+        <div class="grid grid-cols-2 gap-2">
+          <input type="text" placeholder="Empresa (Ej: COMERSUR)" class="border p-1 text-xs rounded in-exp-empresa" oninput="actualizarVista()">
+          <input type="text" placeholder="Período (Ej: Dic 2025 - Feb 2026)" class="border p-1 text-xs rounded in-exp-periodo" oninput="actualizarVista()">
+        </div>
+        <input type="text" placeholder="Cargo (Ej: Técnico en Operaciones)" class="w-full border p-1 text-xs rounded in-exp-cargo" oninput="actualizarVista()">
+        <textarea rows="2" placeholder="Responsabilidades (Una por línea)" class="w-full border p-1 text-xs rounded in-exp-tareas" oninput="actualizarVista()"></textarea>
+      `;
+      document.getElementById('lista-experiencias').appendChild(div);
+      actualizarVista();
+    }
+
+    // Agregar bloque de estudio en el formulario
+    function agregarEstudio() {
+      contadorEst++;
+      const id = contadorEst;
+      const div = document.createElement('div');
+      div.id = `est-item-${id}`;
+      div.className = 'p-3 bg-gray-50 border rounded-md space-y-2 relative';
+      div.innerHTML = `
+        <button onclick="eliminarItem('est-item-${id}')" class="absolute top-2 right-2 text-red-600 font-bold text-xs">✕ Eliminar</button>
+        <div class="grid grid-cols-2 gap-2">
+          <input type="text" placeholder="Nivel (Ej: Tercer Nivel)" class="border p-1 text-xs rounded in-est-nivel" oninput="actualizarVista()">
+          <input type="text" placeholder="Período (Ej: 2011 - 2017)" class="border p-1 text-xs rounded in-est-periodo" oninput="actualizarVista()">
+        </div>
+        <input type="text" placeholder="Título (Ej: Ingeniero en Computación)" class="w-full border p-1 text-xs rounded in-est-titulo" oninput="actualizarVista()">
+        <input type="text" placeholder="Institución (Ej: Universidad Agraria del Ecuador)" class="w-full border p-1 text-xs rounded in-est-inst" oninput="actualizarVista()">
+      `;
+      document.getElementById('lista-estudios').appendChild(div);
+      actualizarVista();
+    }
+
+    function eliminarItem(id) {
+      document.getElementById(id).remove();
+      actualizarVista();
+    }
+
+    // Renderizar los datos dinámicos en la hoja
+    function actualizarVista() {
+      // Datos Generales
+      document.getElementById('pv-nombre').innerText = document.getElementById('in-nombre').value || 'SU NOMBRE COMPLETO';
+      document.getElementById('pv-titulo').innerText = document.getElementById('in-titulo').value || 'SU TÍTULO / CARGO';
+      document.getElementById('pv-direccion').innerText = document.getElementById('in-direccion').value || 'Dirección...';
+      document.getElementById('pv-telefono').innerText = document.getElementById('in-telefono').value || '---';
+      document.getElementById('pv-cedula').innerText = document.getElementById('in-cedula').value || '---';
+      document.getElementById('pv-licencia').innerText = document.getElementById('in-licencia').value || '---';
+      document.getElementById('pv-perfil').innerText = document.getElementById('in-perfil').value || 'Su perfil profesional...';
+
+      // Competencias
+      const compInput = document.getElementById('in-competencias').value;
+      const compContainer = document.getElementById('pv-competencias');
+      compContainer.innerHTML = '';
+      if (compInput) {
+        compInput.split(',').forEach(c => {
+          if (c.trim()) {
+            const li = document.createElement('li');
+            li.innerText = c.trim();
+            compContainer.appendChild(li);
+          }
+        });
+      }
+
+      // Experiencias
+      const expContainer = document.getElementById('pv-experiencia');
+      expContainer.innerHTML = '';
+      document.querySelectorAll('#lista-experiencias > div').forEach(item => {
+        const empresa = item.querySelector('.in-exp-empresa').value;
+        const periodo = item.querySelector('.in-exp-periodo').value;
+        const cargo = item.querySelector('.in-exp-cargo').value;
+        const tareas = item.querySelector('.in-exp-tareas').value.split('\n');
+
+        if (empresa || cargo) {
+          const block = document.createElement('div');
+          let tareasHTML = '';
+          tareas.forEach(t => {
+            if (t.trim()) tareasHTML += `<li class="ml-4 list-disc">${t.trim()}</li>`;
+          });
+
+          block.innerHTML = `
+            <div class="flex justify-between font-bold text-gray-800">
+              <span>${empresa}</span>
+              <span class="text-gray-600 font-normal">${periodo}</span>
+            </div>
+            <div class="italic font-semibold text-gray-700">${cargo}</div>
+            <ul class="text-gray-600 mt-1 space-y-0.5">${tareasHTML}</ul>
+          `;
+          expContainer.appendChild(block);
+        }
+      });
+
+      // Estudios
+      const estContainer = document.getElementById('pv-estudios');
+      estContainer.innerHTML = '';
+      document.querySelectorAll('#lista-estudios > div').forEach(item => {
+        const nivel = item.querySelector('.in-est-nivel').value;
+        const periodo = item.querySelector('.in-est-periodo').value;
+        const titulo = item.querySelector('.in-est-titulo').value;
+        const inst = item.querySelector('.in-est-inst').value;
+
+        if (titulo || inst) {
+          const block = document.createElement('div');
+          block.innerHTML = `
+            <div class="flex justify-between font-bold text-gray-800">
+              <span>${nivel ? nivel + ': ' : ''}${titulo}</span>
+              <span class="text-gray-600 font-normal">${periodo}</span>
+            </div>
+            <div class="text-gray-600">${inst}</div>
+          `;
+          estContainer.appendChild(block);
+        }
+      });
+    }
+
+    function descargarPDF() {
+      const element = document.getElementById('hoja-de-vida');
+      const opt = {
+        margin:       5,
+        filename:     'Hoja_de_Vida.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(element).save();
+    }
+
+    async function guardarEnBaseDeDatos() {
+      // Recolectar datos dinámicos
+      const experiencias = [];
+      document.querySelectorAll('#lista-experiencias > div').forEach(item => {
+        experiencias.push({
+          empresa: item.querySelector('.in-exp-empresa').value,
+          periodo: item.querySelector('.in-exp-periodo').value,
+          cargo: item.querySelector('.in-exp-cargo').value,
+          responsabilidades: item.querySelector('.in-exp-tareas').value.split('\n').filter(t => t.trim())
+        });
+      });
+
+      const estudios = [];
+      document.querySelectorAll('#lista-estudios > div').forEach(item => {
+        estudios.push({
+          nivel: item.querySelector('.in-est-nivel').value,
+          periodo: item.querySelector('.in-est-periodo').value,
+          titulo: item.querySelector('.in-est-titulo').value,
+          institucion: item.querySelector('.in-est-inst').value
+        });
+      });
+
+      const payload = {
+        datosPersonales: {
+          nombreCompleto: document.getElementById('in-nombre').value,
+          titulo: document.getElementById('in-titulo').value,
+          direccion: document.getElementById('in-direccion').value,
+          telefono: document.getElementById('in-telefono').value,
+          cedula: document.getElementById('in-cedula').value,
+          licencia: document.getElementById('in-licencia').value
+        },
+        perfilProfesional: document.getElementById('in-perfil').value,
+        competencias: document.getElementById('in-competencias').value.split(',').map(s => s.trim()),
+        experienciaLaboral: experiencias,
+        formacionAcademica: estudios
+      };
+
+      try {
+        const response = await fetch('http://localhost:3000/api/cv', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          alert('¡Hoja de vida completa guardada exitosamente en MongoDB!');
+        } else {
+          alert('Error al guardar en la base de datos.');
+        }
+      } catch (error) {
+        console.error(error);
+        alert('No se pudo conectar con el servidor Backend.');
+      }
+    }
+
+    // Crear un item de cada uno al iniciar
+    agregarExperiencia();
+    agregarEstudio();
+  </script>
 </body>
 </html>
