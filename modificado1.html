@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Editor e Importador de Hojas de Vida PDF</title>
+  <title>Editor de Hojas de Vida con IA Gratuita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -14,7 +14,6 @@
       background: white;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
     }
-
     section, #pv-experiencia > div, #pv-estudios > div, li {
       page-break-inside: avoid !important;
       break-inside: avoid !important;
@@ -23,11 +22,11 @@
 </head>
 <body class="bg-gray-100 h-screen flex flex-col font-sans">
 
-  <!-- Encabezado -->
+  <!-- Header -->
   <header class="bg-blue-900 text-white p-4 flex justify-between items-center shadow-md">
     <div>
-      <h1 class="text-xl font-bold">Editor e Importador Limpio de Hoja de Vida</h1>
-      <p class="text-xs text-blue-200">Carga un documento PDF para extraer su información de manera limpia al panel.</p>
+      <h1 class="text-xl font-bold">Editor de CV con Extracción por Inteligencia Artificial</h1>
+      <p class="text-xs text-blue-200">Parseo estructurado mediante Gemini AI (100% Gratuito)</p>
     </div>
     <div>
       <button onclick="descargarPDF()" class="bg-amber-500 hover:bg-amber-600 px-4 py-2 rounded text-sm font-semibold text-white shadow">
@@ -38,67 +37,73 @@
 
   <div class="flex flex-1 overflow-hidden">
     
-    <!-- LADO IZQUIERDO: Formulario (Empieza completamente VACÍO) -->
+    <!-- LADO IZQUIERDO: Formulario -->
     <div class="w-1/2 p-6 overflow-y-auto bg-white border-r space-y-6">
       
-      <!-- Cargar PDF -->
-      <div class="bg-blue-50 border-2 border-dashed border-blue-400 p-4 rounded-lg">
-        <h2 class="text-sm font-bold text-blue-900 mb-1">📥 Cargar PDF para Editar</h2>
-        <p class="text-xs text-gray-600 mb-3">Selecciona un PDF. El panel se limpiará automáticamente antes de importar.</p>
-        <input type="file" id="in-pdf-upload" accept="application/pdf" onchange="importarPDF(event)" class="w-full text-xs text-gray-700 border p-2 rounded bg-white file:mr-4 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700">
-        <div id="pdf-status" class="text-xs font-semibold mt-2 text-blue-800"></div>
+      <!-- Panel de API Key + Carga de Archivo -->
+      <div class="bg-blue-50 border-2 border-dashed border-blue-400 p-4 rounded-lg space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-blue-900 mb-1">🔑 Clave API Gratuita de Gemini AI:</label>
+          <input type="password" id="api-key" placeholder="Pega tu API Key de Google AI Studio aquí..." class="w-full text-xs p-2 border rounded bg-white">
+          <p class="text-[10px] text-gray-500 mt-1">Consíguela gratis en <a href="https://aistudio.google.com/" target="_blank" class="text-blue-600 underline">aistudio.google.com</a></p>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-blue-900 mb-1">📥 Subir PDF para Extraer con IA:</label>
+          <input type="file" id="in-pdf-upload" accept="application/pdf" onchange="importarPDF(event)" class="w-full text-xs text-gray-700 border p-2 rounded bg-white file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700">
+        </div>
+
+        <div id="pdf-status" class="text-xs font-semibold text-blue-800"></div>
       </div>
 
       <!-- 1. Datos Personales -->
       <div>
         <h2 class="text-lg font-bold mb-3 text-blue-900 border-b pb-1">1. Datos Personales</h2>
         <div class="grid grid-cols-2 gap-3">
-          
           <div class="col-span-2">
             <label class="block text-xs font-semibold text-gray-600">Fotografía de Perfil</label>
-            <input type="file" id="in-foto" accept="image/*" onchange="cargarFoto(event)" class="w-full text-xs text-gray-500 border p-1 rounded mt-1 file:mr-4 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+            <input type="file" id="in-foto" accept="image/*" onchange="cargarFoto(event)" class="w-full text-xs text-gray-500 border p-1 rounded mt-1">
           </div>
-
           <div class="col-span-2">
             <label class="block text-xs font-semibold text-gray-600">Nombre Completo</label>
-            <input type="text" id="in-nombre" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm" placeholder="Ej. JOSÉ LEONARDO JARRÍN GAIBOR">
+            <input type="text" id="in-nombre" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm">
           </div>
           <div class="col-span-2">
             <label class="block text-xs font-semibold text-gray-600">Título / Especialidad</label>
-            <input type="text" id="in-titulo" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm" placeholder="Ej. Ingeniero en Computación e Informática">
+            <input type="text" id="in-titulo" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm">
           </div>
           <div class="col-span-2">
             <label class="block text-xs font-semibold text-gray-600">Dirección</label>
-            <input type="text" id="in-direccion" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm" placeholder="Ej. Guayaquil, Ecuador">
+            <input type="text" id="in-direccion" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm">
           </div>
           <div>
             <label class="block text-xs font-semibold text-gray-600">Teléfono</label>
-            <input type="text" id="in-telefono" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm" placeholder="09XXXXXXXX">
+            <input type="text" id="in-telefono" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm">
           </div>
           <div>
             <label class="block text-xs font-semibold text-gray-600">C.I.</label>
-            <input type="text" id="in-cedula" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm" placeholder="09XXXXXXXX">
+            <input type="text" id="in-cedula" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm">
           </div>
           <div class="col-span-2">
             <label class="block text-xs font-semibold text-gray-600">Licencia de Conducir</label>
-            <input type="text" id="in-licencia" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm" placeholder="Tipo B / G">
+            <input type="text" id="in-licencia" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm">
           </div>
         </div>
       </div>
 
-      <!-- 2. Perfil Profesional -->
+      <!-- 2. Perfil -->
       <div>
         <h2 class="text-lg font-bold mb-3 text-blue-900 border-b pb-1">2. Perfil Profesional</h2>
-        <textarea id="in-perfil" oninput="actualizarVista()" rows="4" class="w-full border p-2 rounded text-sm" placeholder="Descripción de perfil..."></textarea>
+        <textarea id="in-perfil" oninput="actualizarVista()" rows="4" class="w-full border p-2 rounded text-sm"></textarea>
       </div>
 
       <!-- 3. Competencias -->
       <div>
         <h2 class="text-lg font-bold mb-3 text-blue-900 border-b pb-1">3. Competencias (Separadas por comas)</h2>
-        <textarea id="in-competencias" oninput="actualizarVista()" rows="2" class="w-full border p-2 rounded text-sm" placeholder="Logística, Yard Planning, Ecuapass..."></textarea>
+        <textarea id="in-competencias" oninput="actualizarVista()" rows="2" class="w-full border p-2 rounded text-sm"></textarea>
       </div>
 
-      <!-- 4. Experiencia Laboral -->
+      <!-- 4. Experiencia -->
       <div>
         <div class="flex justify-between items-center border-b pb-1 mb-3">
           <h2 class="text-lg font-bold text-blue-900">4. Experiencia Laboral</h2>
@@ -107,7 +112,7 @@
         <div id="lista-experiencias" class="space-y-4"></div>
       </div>
 
-      <!-- 5. Formación Académica -->
+      <!-- 5. Formación -->
       <div>
         <div class="flex justify-between items-center border-b pb-1 mb-3">
           <h2 class="text-lg font-bold text-blue-900">5. Formación Académica</h2>
@@ -118,7 +123,7 @@
 
     </div>
 
-    <!-- LADO DERECHO: Vista Previa Dinámica -->
+    <!-- LADO DERECHO: Vista Previa A4 -->
     <div class="w-1/2 bg-gray-200 p-6 overflow-y-auto flex justify-center">
       <div id="hoja-de-vida" class="a4-page p-8 font-sans text-gray-800 text-xs flex flex-col justify-between">
         
@@ -142,26 +147,26 @@
           </div>
 
           <!-- Perfil -->
-          <section id="sec-pv-perfil">
+          <section>
             <h2 class="text-xs font-bold text-blue-900 uppercase border-b border-gray-300 pb-1 mb-2">Perfil Profesional</h2>
             <p id="pv-perfil" class="text-justify text-gray-700 leading-relaxed"></p>
           </section>
 
           <!-- Competencias -->
-          <section id="sec-pv-competencias">
+          <section>
             <h2 class="text-xs font-bold text-blue-900 uppercase border-b border-gray-300 pb-1 mb-2">Competencias Destacadas</h2>
             <ul id="pv-competencias" class="grid grid-cols-2 gap-1 list-disc pl-4 text-gray-700"></ul>
           </section>
 
           <!-- Experiencia Laboral -->
-          <section id="sec-pv-experiencia">
+          <section>
             <h2 class="text-xs font-bold text-blue-900 uppercase border-b border-gray-300 pb-1 mb-2">Experiencia Laboral</h2>
             <div id="pv-experiencia" class="space-y-3"></div>
           </section>
         </div>
 
         <!-- Formación Académica -->
-        <section id="sec-pv-estudios" class="mt-4">
+        <section class="mt-4">
           <h2 class="text-xs font-bold text-blue-900 uppercase border-b border-gray-300 pb-1 mb-2">Formación Académica</h2>
           <div id="pv-estudios" class="space-y-2"></div>
         </section>
@@ -177,7 +182,6 @@
     let contadorExp = 0;
     let contadorEst = 0;
 
-    // Función para vaciar completamente el formulario y el visor previo
     function limpiarPanel() {
       document.getElementById('in-nombre').value = '';
       document.getElementById('in-titulo').value = '';
@@ -187,13 +191,10 @@
       document.getElementById('in-licencia').value = '';
       document.getElementById('in-perfil').value = '';
       document.getElementById('in-competencias').value = '';
-
       document.getElementById('lista-experiencias').innerHTML = '';
       document.getElementById('lista-estudios').innerHTML = '';
-      
       contadorExp = 0;
       contadorEst = 0;
-
       actualizarVista();
     }
 
@@ -201,160 +202,130 @@
       const file = event.target.files[0];
       if (file) {
         const reader = new FileReader();
-        reader.onload = function(e) {
-          document.getElementById('pv-foto').src = e.target.result;
-        };
+        reader.onload = function(e) { document.getElementById('pv-foto').src = e.target.result; };
         reader.readAsDataURL(file);
       }
     }
 
     async function importarPDF(event) {
       const file = event.target.files[0];
-      if (!file) return;
-
+      const apiKey = document.getElementById('api-key').value.trim();
       const status = document.getElementById('pdf-status');
-      status.innerText = '⏳ Limpiando datos previos e importando nuevo PDF...';
 
-      // PASO CLAVE: Reiniciar todo antes de procesar el archivo subido
+      if (!file) return;
+      if (!apiKey) {
+        alert('Por favor ingresa tu API Key gratuita de Gemini para activar el análisis por IA.');
+        return;
+      }
+
+      status.innerText = '⏳ Extrayendo texto plano del PDF...';
       limpiarPanel();
 
       try {
         const arrayBuffer = await file.arrayBuffer();
         const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-        let fullText = '';
+        let textoBruto = '';
 
         for (let i = 1; i <= pdf.numPages; i++) {
           const page = await pdf.getPage(i);
           const textContent = await page.getTextContent();
-          const pageText = textContent.items.map(item => item.str).join(' ');
-          fullText += pageText + '\n';
+          textoBruto += textContent.items.map(item => item.str).join(' ') + '\n';
         }
 
-        parsearTextoPDF(fullText);
-        status.innerText = '✅ ¡Información extraída correctamente al panel listo para editar!';
+        status.innerText = '🤖 Gemini AI analizando y estructurando el documento...';
+        await procesarConGeminiIA(textoBruto, apiKey);
 
       } catch (error) {
         console.error(error);
-        status.innerText = '❌ Error al procesar el archivo. Asegúrate de que sea un PDF válido con texto seleccionable.';
+        status.innerText = '❌ Error al procesar el archivo con Inteligencia Artificial.';
       }
     }
 
-    function parsearTextoPDF(texto) {
-      const lineas = texto.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-      if (lineas.length === 0) return;
+    // Llamada directa a la API gratuita de Gemini AI en formato JSON
+    async function procesarConGeminiIA(textoPDF, apiKey) {
+      const status = document.getElementById('pdf-status');
 
-      // 1. Extraer Nombre
-      const posibleNombre = lineas.find((l, i) => i < 5 && l === l.toUpperCase() && l.length > 5 && !l.includes('PERFIL') && !l.includes('EXPERIENCIA'));
-      if (posibleNombre) document.getElementById('in-nombre').value = posibleNombre;
-
-      // 2. Extraer Teléfono
-      const matchTel = texto.match(/(?:Teléfono|Tel|Celular)?[:\s]*((?:09|\+593)\d{8,9}|\d{9,10})/i);
-      if (matchTel) document.getElementById('in-telefono').value = matchTel[1];
-
-      // 3. Extraer Cédula
-      const matchCed = texto.match(/(?:C\.I\.|Cedula|CI)?[:\s]*(\d{10})/i);
-      if (matchCed) document.getElementById('in-cedula').value = matchCed[1];
-
-      // 4. Extraer Licencia
-      const matchLic = texto.match(/Licencia[:\s]*([^\n|]+)/i);
-      if (matchLic) document.getElementById('in-licencia').value = matchLic[1].trim();
-
-      // 5. Extraer Título
-      const indexNombre = lineas.indexOf(posibleNombre);
-      if (indexNombre !== -1 && lineas[indexNombre + 1] && !lineas[indexNombre + 1].toLowerCase().includes('teléfono') && !lineas[indexNombre + 1].toLowerCase().includes('guayaquil')) {
-        document.getElementById('in-titulo').value = lineas[indexNombre + 1];
-      }
-
-      // 6. Extraer Dirección
-      const lineaDireccion = lineas.find(l => /guayaquil|calle|coop|mz|solar|av\.|barrio/i.test(l));
-      if (lineaDireccion) document.getElementById('in-direccion').value = lineaDireccion.replace(/Teléfono.*$/i, '').trim();
-
-      // 7. Extraer Secciones
-      const diccionarios = {
-        perfil: ['PERFIL PROFESIONAL', 'PERFIL', 'RESUMEN', 'SOBRE MÍ', 'EXTRACTO'],
-        competencias: ['COMPETENCIAS DESTACADAS', 'COMPETENCIAS', 'HABILIDADES', 'APTITUDES', 'CONOCIMIENTOS'],
-        experiencia: ['EXPERIENCIA LABORAL', 'EXPERIENCIA', 'TRAYECTORIA LABORAL', 'HISTORIAL LABORAL'],
-        estudios: ['FORMACIÓN ACADÉMICA', 'FORMACIÓN', 'EDUCACIÓN', 'ESTUDIOS']
-      };
-
-      const seccionesEncontradas = [];
-      lineas.forEach((linea, index) => {
-        const textoL = linea.toUpperCase();
-        for (const [clave, alias] of Object.entries(diccionarios)) {
-          if (alias.some(a => textoL.includes(a))) {
-            seccionesEncontradas.push({ clave, index, titulo: linea });
-          }
-        }
-      });
-
-      seccionesEncontradas.sort((a, b) => a.index - b.index);
-
-      const contenidoSecciones = {};
-      seccionesEncontradas.forEach((sec, idx) => {
-        const siguienteIndex = seccionesEncontradas[idx + 1] ? seccionesEncontradas[idx + 1].index : lineas.length;
-        contenidoSecciones[sec.clave] = lineas.slice(sec.index + 1, siguienteIndex).join('\n');
-      });
-
-      // Rellenar Perfil
-      if (contenidoSecciones.perfil) {
-        document.getElementById('in-perfil').value = contenidoSecciones.perfil.replace(/\n/g, ' ');
-      }
-
-      // Rellenar Competencias
-      if (contenidoSecciones.competencias) {
-        const compLimpias = contenidoSecciones.competencias
-          .split(/[\bullet•,\n\t]/)
-          .map(c => c.trim())
-          .filter(c => c.length > 2);
-        document.getElementById('in-competencias').value = compLimpias.join(', ');
-      }
-
-      // Rellenar Experiencia Laboral
-      if (contenidoSecciones.experiencia) {
-        const regexFecha = /(?:Ene|Feb|Mar|Abr|May|Jun|Jul|Ago|Sep|Oct|Nov|Dic|\d{4})[a-z]*\s*[\d{4}]*\s*[\u2013\-\a]\s*(?:Ene|Feb|Mar|Abr|May|Jun|Jul|Ago|Sep|Oct|Nov|Dic|Presente|\d{4})*/gi;
-        const lineasExp = contenidoSecciones.experiencia.split('\n');
-        let tempEmpresa = '', tempPeriodo = '', tempCargo = '', tempTareas = [];
-
-        lineasExp.forEach((l) => {
-          const matchFecha = l.match(regexFecha);
-          if (matchFecha) {
-            if (tempEmpresa || tempCargo) {
-              agregarExperiencia(tempEmpresa, tempPeriodo, tempCargo, tempTareas.join('\n'));
-              tempEmpresa = ''; tempPeriodo = ''; tempCargo = ''; tempTareas = [];
+      const prompt = `
+        Analiza el siguiente texto extraído de una Hoja de Vida/Curriculum Vitae y extrae la información estructurada estrictamente en formato JSON válido.
+        
+        Esquema esperado de respuesta (JSON únicamente, sin bloque de código ni explicaciones):
+        {
+          "nombre": "Nombre completo",
+          "titulo": "Título profesional o área",
+          "direccion": "Dirección completa o ciudad",
+          "telefono": "Teléfono de contacto",
+          "cedula": "Número de cédula/identificación",
+          "licencia": "Licencia de conducir si existe",
+          "perfil": "Texto completo del perfil profesional",
+          "competencias": ["Competencia 1", "Competencia 2"],
+          "experiencias": [
+            {
+              "empresa": "Nombre empresa",
+              "periodo": "Rango de fechas",
+              "cargo": "Cargo desempeñado",
+              "tareas": "Responsabilidades y logros separados por saltos de línea"
             }
-            tempPeriodo = matchFecha[0];
-            tempEmpresa = l.replace(tempPeriodo, '').trim();
-          } else if (!tempCargo && tempEmpresa) {
-            tempCargo = l;
-          } else {
-            if (l.length > 0) tempTareas.push(l.replace(/^[\bullet•\-\*]\s*/, ''));
-          }
-        });
-
-        if (tempEmpresa || tempCargo) {
-          agregarExperiencia(tempEmpresa, tempPeriodo, tempCargo, tempTareas.join('\n'));
+          ],
+          "estudios": [
+            {
+              "nivel": "Nivel educativo (ej. Tercer Nivel, Secundaria, Técnico)",
+              "periodo": "Fechas",
+              "titulo": "Título obtenido",
+              "institucion": "Universidad o Instituto"
+            }
+          ]
         }
-      }
 
-      // Rellenar Formación Académica
-      if (contenidoSecciones.estudios) {
-        const lineasEst = contenidoSecciones.estudios.split('\n');
-        lineasEst.forEach(l => {
-          if (l.length < 3) return;
-          const matchFecha = l.match(/\d{4}\s*[\u2013\-a]\s*\d{4}|\d{2}-\d{2}-\d{4}/g);
-          const periodo = matchFecha ? matchFecha[0] : '';
-          const textoSinFecha = l.replace(periodo, '').replace(/[\(\)]/g, '').trim();
+        Texto del PDF:
+        ${textoPDF}
+      `;
 
-          let nivel = 'Formación';
-          if (/tercer|ingeniero|licenciado|master|universidad/i.test(l)) nivel = 'Tercer Nivel / Superior';
-          else if (/técnico|tecnológico|certificación/i.test(l)) nivel = 'Técnico';
-          else if (/bachiller|secundaria/i.test(l)) nivel = 'Secundario';
-
-          agregarEstudio(nivel, periodo, textoSinFecha, '');
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { responseMimeType: "application/json" }
+          })
         });
-      }
 
-      actualizarVista();
+        const data = await response.json();
+        const jsonText = data.candidates[0].content.parts[0].text;
+        const parsedData = JSON.parse(jsonText);
+
+        // Inyectar respuesta exacta de la IA en los controles del formulario
+        document.getElementById('in-nombre').value = parsedData.nombre || '';
+        document.getElementById('in-titulo').value = parsedData.titulo || '';
+        document.getElementById('in-direccion').value = parsedData.direccion || '';
+        document.getElementById('in-telefono').value = parsedData.telefono || '';
+        document.getElementById('in-cedula').value = parsedData.cedula || '';
+        document.getElementById('in-licencia').value = parsedData.licencia || '';
+        document.getElementById('in-perfil').value = parsedData.perfil || '';
+        
+        if (parsedData.competencias) {
+          document.getElementById('in-competencias').value = parsedData.competencias.join(', ');
+        }
+
+        if (parsedData.experiencias && Array.isArray(parsedData.experiencias)) {
+          parsedData.experiencias.forEach(exp => {
+            agregarExperiencia(exp.empresa || '', exp.periodo || '', exp.cargo || '', exp.tareas || '');
+          });
+        }
+
+        if (parsedData.estudios && Array.isArray(parsedData.estudios)) {
+          parsedData.estudios.forEach(est => {
+            agregarEstudio(est.nivel || '', est.periodo || '', est.titulo || '', est.institucion || '');
+          });
+        }
+
+        actualizarVista();
+        status.innerText = '🎉 ¡Documento procesado correctamente mediante IA!';
+
+      } catch (err) {
+        console.error(err);
+        status.innerText = '❌ Error de respuesta desde Gemini AI. Verifica la validez de tu API Key.';
+      }
     }
 
     function agregarExperiencia(empresa = '', periodo = '', cargo = '', tareas = '') {
@@ -486,7 +457,6 @@
       html2pdf().set(opciones).from(element).save();
     }
 
-    // Inicializar la aplicación con la interfaz totalmente limpia
     limpiarPanel();
   </script>
 </body>
