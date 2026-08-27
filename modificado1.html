@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Editor y Extractor Inteligente de CV para PDF</title>
+  <title>Editor e Importador de Hojas de Vida PDF</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
-    /* Dimensiones exactas ajustadas para hoja A4 con altura fija para flex-distribution */
     .a4-page {
       width: 190mm;
       height: 270mm;
@@ -16,7 +15,6 @@
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
     }
 
-    /* Regla CSS crítica para evitar el corte entre páginas al exportar */
     section, #pv-experiencia > div, #pv-estudios > div, li {
       page-break-inside: avoid !important;
       break-inside: avoid !important;
@@ -28,26 +26,25 @@
   <!-- Encabezado -->
   <header class="bg-blue-900 text-white p-4 flex justify-between items-center shadow-md">
     <div>
-      <h1 class="text-xl font-bold">Editor e Importador Inteligente de Hoja de Vida</h1>
-      <p class="text-xs text-blue-200">Carga un PDF, extrae los datos automáticamente y edítalo en tiempo real.</p>
+      <h1 class="text-xl font-bold">Editor e Importador Limpio de Hoja de Vida</h1>
+      <p class="text-xs text-blue-200">Carga un documento PDF para extraer su información de manera limpia al panel.</p>
     </div>
-    <div class="space-x-2">
+    <div>
       <button onclick="descargarPDF()" class="bg-amber-500 hover:bg-amber-600 px-4 py-2 rounded text-sm font-semibold text-white shadow">
-        📄 Descargar PDF Corregido
+        📄 Descargar PDF
       </button>
     </div>
   </header>
 
-  <!-- Contenedor Principal Divisorio -->
   <div class="flex flex-1 overflow-hidden">
     
-    <!-- LADO IZQUIERDO: Formulario de Entrada e Importador -->
+    <!-- LADO IZQUIERDO: Formulario (Empieza completamente VACÍO) -->
     <div class="w-1/2 p-6 overflow-y-auto bg-white border-r space-y-6">
       
-      <!-- Carga e Importación de PDF -->
+      <!-- Cargar PDF -->
       <div class="bg-blue-50 border-2 border-dashed border-blue-400 p-4 rounded-lg">
-        <h2 class="text-sm font-bold text-blue-900 mb-1">📥 Cargar PDF Existente para Edición</h2>
-        <p class="text-xs text-gray-600 mb-3">Sube cualquier PDF de hoja de vida para parsear dinámicamente sus datos.</p>
+        <h2 class="text-sm font-bold text-blue-900 mb-1">📥 Cargar PDF para Editar</h2>
+        <p class="text-xs text-gray-600 mb-3">Selecciona un PDF. El panel se limpiará automáticamente antes de importar.</p>
         <input type="file" id="in-pdf-upload" accept="application/pdf" onchange="importarPDF(event)" class="w-full text-xs text-gray-700 border p-2 rounded bg-white file:mr-4 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700">
         <div id="pdf-status" class="text-xs font-semibold mt-2 text-blue-800"></div>
       </div>
@@ -64,27 +61,27 @@
 
           <div class="col-span-2">
             <label class="block text-xs font-semibold text-gray-600">Nombre Completo</label>
-            <input type="text" id="in-nombre" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm" placeholder="ARMANDO FABRICIO MURILLO CEDEÑO">
+            <input type="text" id="in-nombre" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm" placeholder="Ej. JOSÉ LEONARDO JARRÍN GAIBOR">
           </div>
           <div class="col-span-2">
             <label class="block text-xs font-semibold text-gray-600">Título / Especialidad</label>
-            <input type="text" id="in-titulo" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm" placeholder="Operador RTG, Montacarguista con Licencia G">
+            <input type="text" id="in-titulo" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm" placeholder="Ej. Ingeniero en Computación e Informática">
           </div>
           <div class="col-span-2">
             <label class="block text-xs font-semibold text-gray-600">Dirección</label>
-            <input type="text" id="in-direccion" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm" placeholder="Coop brisas del Salado Mz. 9 - Sl. 17">
+            <input type="text" id="in-direccion" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm" placeholder="Ej. Guayaquil, Ecuador">
           </div>
           <div>
             <label class="block text-xs font-semibold text-gray-600">Teléfono</label>
-            <input type="text" id="in-telefono" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm" placeholder="0991409867">
+            <input type="text" id="in-telefono" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm" placeholder="09XXXXXXXX">
           </div>
           <div>
             <label class="block text-xs font-semibold text-gray-600">C.I.</label>
-            <input type="text" id="in-cedula" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm" placeholder="0913931184">
+            <input type="text" id="in-cedula" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm" placeholder="09XXXXXXXX">
           </div>
           <div class="col-span-2">
             <label class="block text-xs font-semibold text-gray-600">Licencia de Conducir</label>
-            <input type="text" id="in-licencia" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm" placeholder="Tipo G (SOMED)">
+            <input type="text" id="in-licencia" oninput="actualizarVista()" class="w-full border p-2 rounded text-sm" placeholder="Tipo B / G">
           </div>
         </div>
       </div>
@@ -92,13 +89,13 @@
       <!-- 2. Perfil Profesional -->
       <div>
         <h2 class="text-lg font-bold mb-3 text-blue-900 border-b pb-1">2. Perfil Profesional</h2>
-        <textarea id="in-perfil" oninput="actualizarVista()" rows="4" class="w-full border p-2 rounded text-sm"></textarea>
+        <textarea id="in-perfil" oninput="actualizarVista()" rows="4" class="w-full border p-2 rounded text-sm" placeholder="Descripción de perfil..."></textarea>
       </div>
 
       <!-- 3. Competencias -->
       <div>
         <h2 class="text-lg font-bold mb-3 text-blue-900 border-b pb-1">3. Competencias (Separadas por comas)</h2>
-        <textarea id="in-competencias" oninput="actualizarVista()" rows="2" class="w-full border p-2 rounded text-sm"></textarea>
+        <textarea id="in-competencias" oninput="actualizarVista()" rows="2" class="w-full border p-2 rounded text-sm" placeholder="Logística, Yard Planning, Ecuapass..."></textarea>
       </div>
 
       <!-- 4. Experiencia Laboral -->
@@ -121,51 +118,50 @@
 
     </div>
 
-    <!-- LADO DERECHO: Vista Previa A4 Reacomodada Dinámicamente -->
+    <!-- LADO DERECHO: Vista Previa Dinámica -->
     <div class="w-1/2 bg-gray-200 p-6 overflow-y-auto flex justify-center">
       <div id="hoja-de-vida" class="a4-page p-8 font-sans text-gray-800 text-xs flex flex-col justify-between">
         
-        <!-- Bloque Superior Reagrupado -->
         <div class="space-y-4">
-          <!-- Encabezado con Datos y Foto -->
+          <!-- Encabezado con Foto -->
           <div class="flex justify-between items-start border-b-2 border-blue-900 pb-3">
             <div class="pr-4 flex-1">
-              <h1 id="pv-nombre" class="text-lg font-bold text-gray-900 uppercase">ARMANDO FABRICIO MURILLO CEDEÑO</h1>
-              <p id="pv-titulo" class="text-xs font-semibold text-blue-800 mt-1">Operador RTG, Montacarguista con Licencia G</p>
-              <p id="pv-direccion" class="text-xs text-gray-600 mt-1">Coop brisas del Salado Mz. 9 - Sl. 17</p>
+              <h1 id="pv-nombre" class="text-lg font-bold text-gray-900 uppercase"></h1>
+              <p id="pv-titulo" class="text-xs font-semibold text-blue-800 mt-1"></p>
+              <p id="pv-direccion" class="text-xs text-gray-600 mt-1"></p>
               <div class="text-xs text-gray-600 mt-1 space-x-2">
-                <span>Teléfono: <strong id="pv-telefono">0991409867</strong></span> | 
-                <span>C.I. <strong id="pv-cedula">0913931184</strong></span> | 
-                <span>Licencia: <strong id="pv-licencia">Tipo G (SOMED)</strong></span>
+                <span>Teléfono: <strong id="pv-telefono"></strong></span> | 
+                <span>C.I. <strong id="pv-cedula"></strong></span> | 
+                <span>Licencia: <strong id="pv-licencia"></strong></span>
               </div>
             </div>
 
             <div class="flex-shrink-0">
-              <img id="pv-foto" src="https://via.placeholder.com/100x120?text=Sin+Foto" alt="Foto de Perfil" class="w-24 h-28 object-cover border-2 border-blue-900 rounded shadow-sm">
+              <img id="pv-foto" src="https://via.placeholder.com/100x120?text=Sin+Foto" alt="Foto" class="w-24 h-28 object-cover border-2 border-blue-900 rounded shadow-sm">
             </div>
           </div>
 
           <!-- Perfil -->
-          <section>
+          <section id="sec-pv-perfil">
             <h2 class="text-xs font-bold text-blue-900 uppercase border-b border-gray-300 pb-1 mb-2">Perfil Profesional</h2>
             <p id="pv-perfil" class="text-justify text-gray-700 leading-relaxed"></p>
           </section>
 
           <!-- Competencias -->
-          <section>
+          <section id="sec-pv-competencias">
             <h2 class="text-xs font-bold text-blue-900 uppercase border-b border-gray-300 pb-1 mb-2">Competencias Destacadas</h2>
             <ul id="pv-competencias" class="grid grid-cols-2 gap-1 list-disc pl-4 text-gray-700"></ul>
           </section>
 
           <!-- Experiencia Laboral -->
-          <section>
+          <section id="sec-pv-experiencia">
             <h2 class="text-xs font-bold text-blue-900 uppercase border-b border-gray-300 pb-1 mb-2">Experiencia Laboral</h2>
             <div id="pv-experiencia" class="space-y-3"></div>
           </section>
         </div>
 
-        <!-- Bloque Inferior Anclado al Borde de la Hoja -->
-        <section class="mt-4">
+        <!-- Formación Académica -->
+        <section id="sec-pv-estudios" class="mt-4">
           <h2 class="text-xs font-bold text-blue-900 uppercase border-b border-gray-300 pb-1 mb-2">Formación Académica</h2>
           <div id="pv-estudios" class="space-y-2"></div>
         </section>
@@ -176,32 +172,51 @@
   </div>
 
   <script>
-    // Configurar worker oficial de PDF.js para la lectura del PDF subido
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
     let contadorExp = 0;
     let contadorEst = 0;
-    let fotoBase64 = '';
+
+    // Función para vaciar completamente el formulario y el visor previo
+    function limpiarPanel() {
+      document.getElementById('in-nombre').value = '';
+      document.getElementById('in-titulo').value = '';
+      document.getElementById('in-direccion').value = '';
+      document.getElementById('in-telefono').value = '';
+      document.getElementById('in-cedula').value = '';
+      document.getElementById('in-licencia').value = '';
+      document.getElementById('in-perfil').value = '';
+      document.getElementById('in-competencias').value = '';
+
+      document.getElementById('lista-experiencias').innerHTML = '';
+      document.getElementById('lista-estudios').innerHTML = '';
+      
+      contadorExp = 0;
+      contadorEst = 0;
+
+      actualizarVista();
+    }
 
     function cargarFoto(event) {
       const file = event.target.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
-          fotoBase64 = e.target.result;
-          document.getElementById('pv-foto').src = fotoBase64;
+          document.getElementById('pv-foto').src = e.target.result;
         };
         reader.readAsDataURL(file);
       }
     }
 
-    // Lógica para importar y extraer el texto bruto del PDF subido
     async function importarPDF(event) {
       const file = event.target.files[0];
       if (!file) return;
 
       const status = document.getElementById('pdf-status');
-      status.innerText = '⏳ Procesando y analizando estructura del PDF...';
+      status.innerText = '⏳ Limpiando datos previos e importando nuevo PDF...';
+
+      // PASO CLAVE: Reiniciar todo antes de procesar el archivo subido
+      limpiarPanel();
 
       try {
         const arrayBuffer = await file.arrayBuffer();
@@ -215,47 +230,46 @@
           fullText += pageText + '\n';
         }
 
-        status.innerText = '✅ Texto extraído. Parseando campos dinámicamente...';
         parsearTextoPDF(fullText);
+        status.innerText = '✅ ¡Información extraída correctamente al panel listo para editar!';
 
       } catch (error) {
         console.error(error);
-        status.innerText = '❌ Error al leer el PDF. Verifica que no esté encriptado o sea una imagen escaneada.';
+        status.innerText = '❌ Error al procesar el archivo. Asegúrate de que sea un PDF válido con texto seleccionable.';
       }
     }
 
-    // Parser Inteligente basado en bloques y diccionarios dinámicos
     function parsearTextoPDF(texto) {
       const lineas = texto.split('\n').map(l => l.trim()).filter(l => l.length > 0);
       if (lineas.length === 0) return;
 
-      // 1. Nombre Completo (Busca líneas iniciales en mayúsculas)
-      const posibleNombre = lineas.find((l, i) => i < 5 && l === l.toUpperCase() && l.length > 6 && !l.includes('PERFIL') && !l.includes('EXPERIENCIA'));
+      // 1. Extraer Nombre
+      const posibleNombre = lineas.find((l, i) => i < 5 && l === l.toUpperCase() && l.length > 5 && !l.includes('PERFIL') && !l.includes('EXPERIENCIA'));
       if (posibleNombre) document.getElementById('in-nombre').value = posibleNombre;
 
-      // 2. Teléfono
+      // 2. Extraer Teléfono
       const matchTel = texto.match(/(?:Teléfono|Tel|Celular)?[:\s]*((?:09|\+593)\d{8,9}|\d{9,10})/i);
       if (matchTel) document.getElementById('in-telefono').value = matchTel[1];
 
-      // 3. Cédula (CI)
+      // 3. Extraer Cédula
       const matchCed = texto.match(/(?:C\.I\.|Cedula|CI)?[:\s]*(\d{10})/i);
       if (matchCed) document.getElementById('in-cedula').value = matchCed[1];
 
-      // 4. Licencia
+      // 4. Extraer Licencia
       const matchLic = texto.match(/Licencia[:\s]*([^\n|]+)/i);
       if (matchLic) document.getElementById('in-licencia').value = matchLic[1].trim();
 
-      // 5. Título / Especialidad
+      // 5. Extraer Título
       const indexNombre = lineas.indexOf(posibleNombre);
       if (indexNombre !== -1 && lineas[indexNombre + 1] && !lineas[indexNombre + 1].toLowerCase().includes('teléfono') && !lineas[indexNombre + 1].toLowerCase().includes('guayaquil')) {
         document.getElementById('in-titulo').value = lineas[indexNombre + 1];
       }
 
-      // 6. Dirección
+      // 6. Extraer Dirección
       const lineaDireccion = lineas.find(l => /guayaquil|calle|coop|mz|solar|av\.|barrio/i.test(l));
       if (lineaDireccion) document.getElementById('in-direccion').value = lineaDireccion.replace(/Teléfono.*$/i, '').trim();
 
-      // 7. Parser de Secciones mediante Diccionario de Sinonimia
+      // 7. Extraer Secciones
       const diccionarios = {
         perfil: ['PERFIL PROFESIONAL', 'PERFIL', 'RESUMEN', 'SOBRE MÍ', 'EXTRACTO'],
         competencias: ['COMPETENCIAS DESTACADAS', 'COMPETENCIAS', 'HABILIDADES', 'APTITUDES', 'CONOCIMIENTOS'],
@@ -281,12 +295,12 @@
         contenidoSecciones[sec.clave] = lineas.slice(sec.index + 1, siguienteIndex).join('\n');
       });
 
-      // Asignar Perfil
+      // Rellenar Perfil
       if (contenidoSecciones.perfil) {
         document.getElementById('in-perfil').value = contenidoSecciones.perfil.replace(/\n/g, ' ');
       }
 
-      // Asignar Competencias
+      // Rellenar Competencias
       if (contenidoSecciones.competencias) {
         const compLimpias = contenidoSecciones.competencias
           .split(/[\bullet•,\n\t]/)
@@ -295,13 +309,9 @@
         document.getElementById('in-competencias').value = compLimpias.join(', ');
       }
 
-      // Asignar Experiencia Laboral Dinámicamente
+      // Rellenar Experiencia Laboral
       if (contenidoSecciones.experiencia) {
-        document.getElementById('lista-experiencias').innerHTML = '';
-        contadorExp = 0;
-
         const regexFecha = /(?:Ene|Feb|Mar|Abr|May|Jun|Jul|Ago|Sep|Oct|Nov|Dic|\d{4})[a-z]*\s*[\d{4}]*\s*[\u2013\-\a]\s*(?:Ene|Feb|Mar|Abr|May|Jun|Jul|Ago|Sep|Oct|Nov|Dic|Presente|\d{4})*/gi;
-
         const lineasExp = contenidoSecciones.experiencia.split('\n');
         let tempEmpresa = '', tempPeriodo = '', tempCargo = '', tempTareas = [];
 
@@ -326,11 +336,8 @@
         }
       }
 
-      // Asignar Formación Académica Dinámicamente
+      // Rellenar Formación Académica
       if (contenidoSecciones.estudios) {
-        document.getElementById('lista-estudios').innerHTML = '';
-        contadorEst = 0;
-
         const lineasEst = contenidoSecciones.estudios.split('\n');
         lineasEst.forEach(l => {
           if (l.length < 3) return;
@@ -348,7 +355,6 @@
       }
 
       actualizarVista();
-      document.getElementById('pdf-status').innerText = '🎉 ¡PDF analizado e importado dinámicamente con éxito!';
     }
 
     function agregarExperiencia(empresa = '', periodo = '', cargo = '', tareas = '') {
@@ -364,7 +370,7 @@
           <input type="text" placeholder="Período" value="${periodo}" class="border p-1 text-xs rounded in-exp-periodo" oninput="actualizarVista()">
         </div>
         <input type="text" placeholder="Cargo" value="${cargo}" class="w-full border p-1 text-xs rounded in-exp-cargo" oninput="actualizarVista()">
-        <textarea rows="3" placeholder="Responsabilidades (Una por línea)" class="w-full border p-1 text-xs rounded in-exp-tareas" oninput="actualizarVista()">${tareas}</textarea>
+        <textarea rows="3" placeholder="Responsabilidades" class="w-full border p-1 text-xs rounded in-exp-tareas" oninput="actualizarVista()">${tareas}</textarea>
       `;
       document.getElementById('lista-experiencias').appendChild(div);
       actualizarVista();
@@ -395,13 +401,13 @@
     }
 
     function actualizarVista() {
-      document.getElementById('pv-nombre').innerText = document.getElementById('in-nombre').value || 'SU NOMBRE COMPLETO';
-      document.getElementById('pv-titulo').innerText = document.getElementById('in-titulo').value || 'SU TÍTULO / CARGO';
-      document.getElementById('pv-direccion').innerText = document.getElementById('in-direccion').value || 'Dirección...';
-      document.getElementById('pv-telefono').innerText = document.getElementById('in-telefono').value || '---';
-      document.getElementById('pv-cedula').innerText = document.getElementById('in-cedula').value || '---';
-      document.getElementById('pv-licencia').innerText = document.getElementById('in-licencia').value || '---';
-      document.getElementById('pv-perfil').innerText = document.getElementById('in-perfil').value || 'Su perfil profesional...';
+      document.getElementById('pv-nombre').innerText = document.getElementById('in-nombre').value;
+      document.getElementById('pv-titulo').innerText = document.getElementById('in-titulo').value;
+      document.getElementById('pv-direccion').innerText = document.getElementById('in-direccion').value;
+      document.getElementById('pv-telefono').innerText = document.getElementById('in-telefono').value;
+      document.getElementById('pv-cedula').innerText = document.getElementById('in-cedula').value;
+      document.getElementById('pv-licencia').innerText = document.getElementById('in-licencia').value;
+      document.getElementById('pv-perfil').innerText = document.getElementById('in-perfil').value;
 
       const compInput = document.getElementById('in-competencias').value;
       const compContainer = document.getElementById('pv-competencias');
@@ -465,19 +471,14 @@
       });
     }
 
-    // Exportación optimizada a PDF
     function descargarPDF() {
       const element = document.getElementById('hoja-de-vida');
 
       const opciones = {
         margin: [10, 10, 10, 10],
-        filename: 'Hoja_de_Vida_Corregida.pdf',
+        filename: 'Hoja_de_Vida_Editada.pdf',
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { 
-          scale: 2, 
-          useCORS: true,
-          scrollY: 0
-        },
+        html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
         pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
       };
@@ -485,31 +486,8 @@
       html2pdf().set(opciones).from(element).save();
     }
 
-    // Datos por defecto cargados al inicio
-    document.getElementById('in-nombre').value = 'ARMANDO FABRICIO MURILLO CEDEÑO';
-    document.getElementById('in-titulo').value = 'Operador RTG, Montacarguista con Licencia G';
-    document.getElementById('in-direccion').value = 'Coop brisas del Salado Mz. 9 - Sl. 17';
-    document.getElementById('in-telefono').value = '0991409867';
-    document.getElementById('in-cedula').value = '0913931184';
-    document.getElementById('in-licencia').value = 'Tipo G (SOMED)';
-    document.getElementById('in-perfil').value = 'Operador de Grúa RTG con más de 10 años de experiencia en la operación de maquinaria portuaria y logística. Reconocido por la precisión en la manipulación de carga, el cumplimiento de normas de seguridad y la capacidad de trabajar bajo presión en entornos de alto volumen. Orientado a resultados y comprometido con la eficiencia operativa.';
-    document.getElementById('in-competencias').value = 'Operación de grúas RTG, Seguridad industrial y portuaria, Trabajo en equipo bajo presión, Optimización de procesos logísticos';
-
-    agregarExperiencia(
-      'INARPI TPG',
-      'Feb 2017 - Dic 2023',
-      'Operador de Reach Stacker - Grúa RTG',
-      'Operar la grúa RTG para el apilamiento, ordenamiento y retiro de contenedores en los bloques asignados del patio.\nCargar y descargar contenedores sobre camiones y plataformas de transporte terrestre con alta precisión y alineación.\nTransitar la grúa a lo largo de las calles del patio y realizar giros de ruedas (gantry) para el cambio seguro de bloque.\nInspeccionar el equipo al inicio del turno comprobando el motor diésel, cables de acero, sistema eléctrico e hidráulico.'
-    );
-
-    agregarExperiencia(
-      'ECUAESTIBAS',
-      'Abr 2012 - Oct 2016',
-      'Operador de Reach Stacker',
-      'Maniobrar la grúa telescópica para el levante, traslado y apilamiento seguro de contenedores llenos y vacíos en el patio.\nCargar y descargar contenedores sobre chasís de camiones y plataformas de transporte terrestre con precisión.\nApilar contenedores a distintas alturas y filas optimizando el espacio según la planificación del terminal.\nUbicar contenedores refrigerados (reefer) y de mercancía peligrosa (IMO) en las zonas asignadas del patio.'
-    );
-
-    agregarEstudio('Secundario', '1996 - 2002', 'Bachiller Físico Matemático', 'Unidad Educativa Nacional Olmedo');
+    // Inicializar la aplicación con la interfaz totalmente limpia
+    limpiarPanel();
   </script>
 </body>
 </html>
