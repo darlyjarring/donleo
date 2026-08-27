@@ -6,14 +6,23 @@
   <title>Creador de Hoja de Vida Completa</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
   <style>
     .a4-page {
-      width: 210mm;
-      min-height: 297mm;
+      width: 100%;
+      max-width: 190mm; /* Se ajusta a 190mm para dejar espacio exacto a los márgenes A4 (210mm - 20mm de margen) */
+      min-height: 277mm;
       background: white;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
     }
+  
+    /* Evita que las secciones o ítems se corten feo entre páginas */
+    section, .a4-page > div, li {
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+    }
   </style>
+  
 </head>
 <body class="bg-gray-100 h-screen flex flex-col">
 
@@ -308,17 +317,25 @@
       });
     }
 
-    function descargarPDF() {
-      const element = document.getElementById('hoja-de-vida');
-      const opt = {
-        margin:       5,
-        filename:     'Hoja_de_Vida.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      };
-      html2pdf().set(opt).from(element).save();
-    }
+      function descargarPDF() {
+        const element = document.getElementById('hoja-de-vida');
+      
+        const opciones = {
+          margin: [10, 10, 10, 10], // Margen: arriba, izquierda, abajo, derecha en mm
+          filename: 'Hoja_de_Vida.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { 
+            scale: 2, 
+            useCORS: true,
+            scrollY: 0
+          },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+          pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        };
+      
+        // Se corrige la variable a 'opciones'
+        html2pdf().set(opciones).from(element).save();
+      }
 
     async function guardarEnBaseDeDatos() {
       const experiencias = [];
